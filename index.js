@@ -77,7 +77,11 @@ class App extends React.Component {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(({ user, additionalUserInfo: { username, profile: { id } }, credential: { accessToken } }) => {
+      .then(async ({
+        user,
+        additionalUserInfo: { username, profile: { id } },
+        credential: { accessToken }
+      }) => {
         document.cookie = `_GH_TOKEN=${id}:${username}:${accessToken}; path=/; domain=${location.hostname}; ${location.protocol === 'https:' ? 'secure;' : ''} samesite=strict`;
         octokit = new Octokit({ auth: token });
         this.setState({ user });
@@ -98,7 +102,7 @@ class App extends React.Component {
       })
 
       const { title, fields } = yaml.load(atob(resp.data.content));
-      this.setState({ owner, repo, title, fields });
+      this.setState({ owner, repo, error: null, title, fields });
     } catch (error) {
       console.log(error);
       this.setState({ owner, repo, error: 'Form not found.', title: null, fields: null });
