@@ -87,13 +87,14 @@ class App extends React.Component {
         this.setState({ user });
         await this.handleOpenForm();
       }).catch((error) => {
-        const errorMessage = error.message;
-        console.log(errorMessage)
+        console.log(error);
+        this.setState({ error });
       });
   }
 
   async handleOpenForm() {
     const { owner, repo } = parseHash();
+    this.setState({ owner, repo, });
     try {
       const resp = await octokit.repos.getContent({
         owner,
@@ -102,10 +103,10 @@ class App extends React.Component {
       })
 
       const { title, fields } = yaml.load(atob(resp.data.content));
-      this.setState({ owner, repo, error: null, title, fields });
+      this.setState({ error: null, title, fields });
     } catch (error) {
       console.log(error);
-      this.setState({ owner, repo, error: 'Form not found.', title: null, fields: null });
+      this.setState({ error: 'Form not found.', title: null, fields: null });
     }
   }
 
@@ -149,7 +150,6 @@ class App extends React.Component {
 
   render() {
     const { error, loading, done, submit, user, title, fields } = this.state;
-    console.log({ error, loading, done, submit, user, title, fields })
     if (error !== null) {
       return (<p>{ error }</p>);
     } else if (loading) {
