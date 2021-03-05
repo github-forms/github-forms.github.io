@@ -1,27 +1,29 @@
- name: Deploy
-  on:
-    push:
-      branches:
-        - main
-  jobs:
-    deploy:
-      name: Deploy
-      runs-on: ubuntu-latest
-      steps:
-        - name: Setup Node.js for use with actions
-          uses: actions/setup-node@v1.1.0
-          with:
-            version: 15.x
+name: Deploy
 
-        - name: Checkout branch
-          uses: actions/checkout@v2
+on:
+  push:
+    branches:
+      - main
 
-        - name: Install dependencies and build
-          run: |
-            npm install
-            npm run build
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js for use with actions
+        uses: actions/setup-node@v1.1.0
+        with:
+          version: 15.x
 
-        - name: Deploy
-          uses: peaceiris/actions-gh-pages@v3
-          with:
-            publish_dir: ./dist
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./dist
