@@ -22,8 +22,8 @@ provider.addScope('repo');
 let octokit;
 
 function parseHash() {
-    const [owner, repo] = location.hash.slice(1).split('/');
-    return { owner, repo };
+  const [owner, repo] = location.hash.slice(1).split('/');
+  return { owner, repo };
 }
  
 class App extends React.Component {
@@ -62,14 +62,13 @@ class App extends React.Component {
           }
 
           octokit = new Octokit({ auth: token });
-          this.setState({ octokit, user });
-
+          this.setState({ user });
           await this.handleOpenForm();
 
         } else {
           document.cookie = "_GH_TOKEN= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
         }
-        
+
         this.setState({ loading: false });
       });
   }
@@ -78,8 +77,11 @@ class App extends React.Component {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(({ additionalUserInfo: { username, profile: { id } }, credential: { accessToken } }) => {
+      .then(({ user, additionalUserInfo: { username, profile: { id } }, credential: { accessToken } }) => {
         document.cookie = `_GH_TOKEN=${id}:${username}:${accessToken}; path=/; domain=${location.hostname}; ${location.protocol === 'https:' ? 'secure;' : ''} samesite=strict`;
+        octokit = new Octokit({ auth: token });
+        this.setState({ user });
+        await this.handleOpenForm();
       }).catch((error) => {
         const errorMessage = error.message;
         console.log(errorMessage)
