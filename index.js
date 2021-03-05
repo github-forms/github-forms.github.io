@@ -69,6 +69,8 @@ class App extends React.Component {
         } else {
           document.cookie = "_GH_TOKEN= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
         }
+        
+        this.setState({ loading: false });
       });
   }
 
@@ -85,7 +87,6 @@ class App extends React.Component {
   }
 
   async handleOpenForm() {
-    this.setState({ loading: true });
     const { owner, repo } = parseHash();
     try {
       const resp = await octokit.repos.getContent({
@@ -95,10 +96,10 @@ class App extends React.Component {
       })
 
       const { title, fields } = yaml.load(atob(resp.data.content));
-      this.setState({ owner, repo, title, fields, loading: false });
+      this.setState({ owner, repo, title, fields });
     } catch (error) {
       console.log(error);
-      this.setState({ owner, repo, error: 'Form not found.', title: null, fields: null, loading: false });
+      this.setState({ owner, repo, error: 'Form not found.', title: null, fields: null });
     }
   }
 
